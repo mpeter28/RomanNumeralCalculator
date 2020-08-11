@@ -28,6 +28,11 @@ public class TestRomanNumeralParser {
     }
 
     @Test
+    public void testGibberishCharacterEqualsZero() {
+        Assert.assertEquals(0, RomanNumeralParser.parseRomanNumeral("g"));
+    }
+
+    @Test
     public void confirmBehaviorOfSomePseudoLegalCases() {
         Assert.assertEquals(6, RomanNumeralParser.parseRomanNumeral("IVX"));
     }
