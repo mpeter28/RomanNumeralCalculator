@@ -103,12 +103,20 @@ public class TestCalculatorGrammar {
     }
 
     @Test
-    public void probe() {
+    public void testCompleteGrammar() {
         String[] tokens = {
                 "(", "(", "IV", "+", "II", ")", ")", "*", "(", "VI", "/", "VIII", ")"
         };
         tokens = CalculatorGrammar.replaceRomanTokensWithArabicTokens(tokens);
 
-        CalculatorGrammar.evalCalculatorProgram(tokens);
+        Assert.assertEquals(4.5, CalculatorGrammar.evalCalculatorProgram(tokens), 0.00001);
+    }
+
+    @Test
+    public void testCompleteGrammarBigCase() {
+        String[] tokens = CalculatorGrammar.lexProgramIntoTokens("( ( II + IX ) - ( C * D ) ) / ( ( X * XXX ) - V ) - IX");
+        tokens = CalculatorGrammar.replaceRomanTokensWithArabicTokens(tokens);
+
+        Assert.assertEquals(-178.454237288, CalculatorGrammar.evalCalculatorProgram(tokens), 0.00001);
     }
 }

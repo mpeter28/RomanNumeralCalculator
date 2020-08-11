@@ -6,7 +6,7 @@ public class CalculatorGrammar {
         return calculatorProgram.split(" +");
     }
 
-    public static String[] replaceRomanTokensWithArabicTokens(String[] programTokens) {
+    static String[] replaceRomanTokensWithArabicTokens(String[] programTokens) {
         for (int tokenIndex = 0; tokenIndex < programTokens.length; tokenIndex++) {
             switch (programTokens[tokenIndex]) {
                 case "(":
@@ -24,17 +24,12 @@ public class CalculatorGrammar {
         return programTokens;
     }
 
-    public static double evalCalculatorProgram(String[] programTokens) {
-        for (String token: programTokens) {
-            System.out.println(token);
-        }
-        System.out.println("=======");
-
+    static double evalCalculatorProgram(String[] programTokens) {
         if (programTokens.length == 0) {
             return 0;
         }
 
-        // Handling sub expressions first
+        // Handling sub expressions inside parenthesis first
         int openingParenIndex = -1;
         int closingParenIndex = -1;
         for (int tokenIndex = 0; tokenIndex < programTokens.length; tokenIndex++) {
@@ -53,18 +48,37 @@ public class CalculatorGrammar {
             return evalCalculatorProgram(replaceSubExpression(evaluateSubExpression, programTokens, openingParenIndex, closingParenIndex));
         }
 
-        // If no sub expressions, next comes multiplication and division
+        // If no sub expressions, next comes multiplication and division in a left to right line
+        for (int index = 0; index < programTokens.length; index++) {
+            if (programTokens[index].equals("*")) {
+                double result = Double.valueOf(programTokens[index - 1]) * Double.valueOf(programTokens[index + 1]);
+                programTokens = replaceSubExpression(result, programTokens, index - 1, index + 1);
+                index--;
+            } else if (programTokens[index].equals("/")) {
+                double result = Double.valueOf(programTokens[index - 1]) / Double.valueOf(programTokens[index + 1]);
+                programTokens = replaceSubExpression(result, programTokens, index - 1, index + 1);
+                index--;
+            }
+        }
 
+        // Finally try addition/subtraction in a left to right line
+        for (int index = 0; index < programTokens.length; index++) {
+            if (programTokens[index].equals("+")) {
+                double result = Double.valueOf(programTokens[index - 1]) + Double.valueOf(programTokens[index + 1]);
+                programTokens = replaceSubExpression(result, programTokens, index - 1, index + 1);
+                index--;
+            } else if (programTokens[index].equals("-")) {
+                double result = Double.valueOf(programTokens[index - 1]) - Double.valueOf(programTokens[index + 1]);
+                programTokens = replaceSubExpression(result, programTokens, index - 1, index + 1);
+                index--;
+            }
+        }
 
-        // Finally try addition/subtraction
-
-
-        // By this point we're down to number literals
-
-        return 0;
+        // By this point we're down to a single number literal
+        return Double.valueOf(programTokens[0]);
     }
 
-    public static String[] replaceSubExpression(double replaceWith, String[] oldProgramTokens, int startReplaceIndex, int stopReplaceIndex) {
+    static String[] replaceSubExpression(double replaceWith, String[] oldProgramTokens, int startReplaceIndex, int stopReplaceIndex) {
         String[] newProgramTokens = new String[oldProgramTokens.length - (stopReplaceIndex - startReplaceIndex)];
 
         System.arraycopy(oldProgramTokens, 0, newProgramTokens, 0, startReplaceIndex);
