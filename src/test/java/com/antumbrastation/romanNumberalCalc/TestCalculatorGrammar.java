@@ -101,4 +101,14 @@ public class TestCalculatorGrammar {
         Assert.assertEquals("VI", tokens[6]);
         Assert.assertEquals("3.4", tokens[7]);
     }
+
+    @Test
+    public void probe() {
+        String[] tokens = {
+                "(", "(", "IV", "+", "II", ")", ")", "*", "(", "VI", "/", "VIII", ")"
+        };
+        tokens = CalculatorGrammar.replaceRomanTokensWithArabicTokens(tokens);
+
+        CalculatorGrammar.evalCalculatorProgram(tokens);
+    }
 }
